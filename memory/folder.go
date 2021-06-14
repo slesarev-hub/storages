@@ -20,6 +20,10 @@ func NewFolder(path string, storage *Storage) *Folder {
 	return &Folder{path, storage}
 }
 
+func NewError(err error, format string, args ...interface{}) storage.Error {
+	return storage.NewError(err, "Memory", format, args...)
+}
+
 func (folder *Folder) Exists(objectRelativePath string) (bool, error) {
 	_, exists := folder.Storage.Load(folder.path + objectRelativePath)
 	return exists, nil
@@ -80,4 +84,8 @@ func (folder *Folder) PutObject(name string, content io.Reader) error {
 	}
 	folder.Storage.Store(objectPath, *bytes.NewBuffer(data))
 	return nil
+}
+
+func (folder *Folder) CopyObject(objectRelativePath string, dstBucket string, dstObject string) error {
+	return NewError(nil, "Not implemented")
 }
