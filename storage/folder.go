@@ -27,7 +27,7 @@ type Folder interface {
 
 	PutObject(name string, content io.Reader) error
 	
-	CopyObject(objectRelativePath string, dstBucket string, dstObject string) error
+	CopyObject(objectRelativePath string, dstObject string) error
 }
 
 func DeleteObjectsWhere(folder Folder, confirm bool, filter func(object1 Object) bool) error {

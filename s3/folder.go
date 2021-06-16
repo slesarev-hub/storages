@@ -149,7 +149,7 @@ func (folder *Folder) PutObject(name string, content io.Reader) error {
 	return folder.uploader.upload(*folder.Bucket, folder.Path+name, content)
 }
 
-func (folder *Folder) CopyObject(objectRelativePath string, dstBucket string, dstObject string) error {
+func (folder *Folder) CopyObject(objectRelativePath string, dstObject string) error {
 	if exists, err := folder.Exists(objectRelativePath); !exists {
 		if err == nil {
 			return NewFolderError(nil, "object do not exists")
@@ -159,7 +159,7 @@ func (folder *Folder) CopyObject(objectRelativePath string, dstBucket string, ds
 	}
 	
 	source := folder.Path+"/"+objectRelativePath
-	input := &s3.CopyObjectInput{CopySource: &source, Bucket: &dstBucket, Key: &dstObject}
+	input := &s3.CopyObjectInput{CopySource: &source, Bucket: folder.Bucket, Key: &dstObject}
 	_, err := folder.S3API.CopyObject(input)
 	if err != nil {
 		return err
