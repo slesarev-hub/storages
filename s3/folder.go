@@ -150,14 +150,14 @@ func (folder *Folder) PutObject(name string, content io.Reader) error {
 }
 
 func (folder *Folder) CopyObject(objectRelativePath string, dstObject string) error {
-	if exists, err := folder.Exists(objectRelativePath); !exists {
+	source := *folder.Bucket + objectRelativePath
+	if exists, err := folder.Exists(source); !exists {
 		if err == nil {
 			return NewFolderError(nil, "object do not exists")
 		} else {
 			return err
 		}
 	}
-	source := *folder.Bucket + objectRelativePath
 	input := &s3.CopyObjectInput{CopySource: &source, Bucket: folder.Bucket, Key: &dstObject}
 	_, err := folder.S3API.CopyObject(input)
 	if err != nil {
