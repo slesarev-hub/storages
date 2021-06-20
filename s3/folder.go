@@ -157,8 +157,7 @@ func (folder *Folder) CopyObject(objectRelativePath string, dstObject string) er
 			return err
 		}
 	}
-	
-	source := folder.Path+"/"+objectRelativePath
+	source := *folder.Bucket + objectRelativePath
 	input := &s3.CopyObjectInput{CopySource: &source, Bucket: folder.Bucket, Key: &dstObject}
 	_, err := folder.S3API.CopyObject(input)
 	if err != nil {
