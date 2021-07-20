@@ -232,6 +232,10 @@ func (folder *Folder) PutObject(name string, content io.Reader) error {
 
 	_, err = io.Copy(file, content)
 	if err != nil {
+		closer_err := file.Close()
+		if closer_err != nil {
+			tracelog.InfoLogger.Println("Error during closing failed upload ", closer_err)
+		}
 		return NewFolderError(
 			err, "Fail write content to file '%s'", 
 			absolutePath,
