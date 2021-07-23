@@ -108,6 +108,10 @@ func (folder *Folder) PutObject(name string, content io.Reader) error {
 	}
 	_, err = io.Copy(file, content)
 	if err != nil {
+		closerErr := file.Close()
+		if closerErr != nil {
+			tracelog.InfoLogger.Println("Error during closing failed upload ", closerErr)
+		}
 		return NewError(err, "Unable to copy data to %v", filePath)
 	}
 	err = file.Close()

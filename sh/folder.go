@@ -175,6 +175,10 @@ func (folder *Folder) Exists(objectRelativePath string) (bool, error)  {
 	path := filepath.Join(folder.path, objectRelativePath)
 	_, err := folder.client.Stat(path)
 
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+
 	if err != nil {
 		return false, NewFolderError(
 			err, "Fail check object existence '%s'", path,
@@ -228,12 +232,22 @@ func (folder *Folder) PutObject(name string, content io.Reader) error {
 
 	_, err = io.Copy(file, content)
 	if err != nil {
+		closerErr := file.Close()
+		if closerErr != nil {
+			tracelog.InfoLogger.Println("Error during closing failed upload ", closerErr)
+		}
 		return NewFolderError(
 			err, "Fail write content to file '%s'", 
 			absolutePath,
 		)
 	}
-
+	err = file.Close()
+	if err != nil {
+		return NewFolderError(
+			err, "Fail write close file '%s'",
+			absolutePath,
+		)
+	}
 	return nil
 }
 
